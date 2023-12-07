@@ -22,7 +22,9 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.status(200).json({ message: "Registration completed" });
+    return res
+      .status(200)
+      .json({ message: "Registration completed: Login now!" });
   } catch (error) {
     return res.status(500).json({
       success: false,
