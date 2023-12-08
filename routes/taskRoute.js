@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const router = Router();
-const { createTask } = require("../controllers/taskController");
+const { createTask, getUserTask } = require("../controllers/taskController");
 const { verifyToken } = require("../middleware/auth");
 
-router.route("/").post(verifyToken, createTask);
+router.route("/").post(verifyToken, createTask).get(verifyToken, getUserTask);
 
 module.exports = router;
