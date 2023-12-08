@@ -59,7 +59,6 @@ const login = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-//test
 module.exports = {
   register,
   login,
