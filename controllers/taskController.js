@@ -24,11 +24,28 @@ const createTask = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Task created", newTask });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 
+const getUserTask = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const [userTask] = await db.query("SELECT * FROM task WHERE user_id = ?", [
+      userId,
+    ]);
+    if (userTask.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No task yet:create one now!" });
+    }
+
+    return res.status(200).json({ success: true, message: userTask });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
 module.exports = {
   createTask,
+  getUserTask,
 };
