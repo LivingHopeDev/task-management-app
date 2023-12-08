@@ -1,6 +1,6 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const { createToken } = require("../middleware/auth");
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   const salt = await bcrypt.genSalt();
@@ -22,7 +22,9 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    return res.status(200).json({ message: "Registration completed" });
+    return res
+      .status(200)
+      .json({ message: "Registration completed: Login now!" });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -46,7 +48,8 @@ const login = async (req, res) => {
     if (!isValidPassword) {
       return res.status(401).json({ message: "Invalid password or email" });
     }
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+    const token = createToken(user._id);
+
     delete user.password;
     return res
       .status(200)
