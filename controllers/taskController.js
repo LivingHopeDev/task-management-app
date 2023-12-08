@@ -34,6 +34,11 @@ const getUserTask = async (req, res) => {
     const [userTask] = await db.query("SELECT * FROM task WHERE user_id = ?", [
       userId,
     ]);
+    if (userTask.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No task yet:create one now!" });
+    }
 
     return res.status(200).json({ success: true, message: userTask });
   } catch (error) {
