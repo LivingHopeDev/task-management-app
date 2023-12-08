@@ -48,7 +48,7 @@ const login = async (req, res) => {
     if (!isValidPassword) {
       return res.status(401).json({ message: "Invalid password or email" });
     }
-    const token = createToken(user._id);
+    const token = createToken(user.id);
 
     delete user.password;
     return res
@@ -59,7 +59,7 @@ const login = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
+//test
 module.exports = {
   register,
   login,
