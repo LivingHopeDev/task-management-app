@@ -66,8 +66,8 @@ const updateTask = async (req, res) => {
     );
     if (result[0].affectedRows === 0) {
       return res
-        .status(404)
-        .json({ success: false, message: "Task not found or unauthorized" });
+        .status(401)
+        .json({ success: false, message: "Unauthorized to access this task" });
     }
 
     return res.status(200).json({ success: true, message: "Task updated" });
@@ -78,8 +78,73 @@ const updateTask = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  const taskId = req.params.id;
+
+  try {
+    const userId = req.user.id;
+    const [userTask] = await db.query("SELECT * FROM task WHERE id = ?", [
+      taskId,
+    ]);
+    if (userTask.length === 0) {
+      return res
+        .status(404)
+        .json({ success: true, message: "Task not found!" });
+    }
+    const result = await db.query(
+      "DELETE FROM task WHERE id = ? AND user_id = ?",
+      [taskId, userId]
+    );
+
+    if (result[0].affectedRows === 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized to access this task" });
+    }
+
+    return res.status(200).json({ success: true, message: "Task deleted" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+const status = async (req, res) => {
+  const taskId = req.params.id;
+
+  try {
+    if (isNaN(taskId)) {
+      return res.status(400).json({ message: `Invalid task ID: ${taskId}` });
+    }
+    const [userTask] = await db.query("SELECT * FROM task WHERE id = ?", [
+      taskId,
+    ]);
+    if (userTask.length === 0) {
+      return res.status(404).json({ message: `Task not found` });
+    }
+
+    const newCompletedStatus = !userTask[0].completed;
+
+    await db.query("UPDATE task SET completed = ? WHERE id = ?", [
+      newCompletedStatus,
+      taskId,
+    ]);
+
+    if (newCompletedStatus) {
+      res.status(200).json({ message: "Task completed" });
+    } else {
+      res.status(200).json({ message: "Task not completed" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 module.exports = {
   createTask,
   getUserTask,
   updateTask,
+  deleteTask,
+  status,
 };
