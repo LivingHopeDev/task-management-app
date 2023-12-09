@@ -66,7 +66,7 @@ const updateTask = async (req, res) => {
     );
     if (result[0].affectedRows === 0) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "Unauthorized to access this task" });
     }
 
@@ -98,7 +98,7 @@ const deleteTask = async (req, res) => {
 
     if (result[0].affectedRows === 0) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "Unauthorized to access this task" });
     }
 
