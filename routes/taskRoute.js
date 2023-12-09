@@ -5,6 +5,7 @@ const {
   getUserTask,
   updateTask,
   deleteTask,
+  status,
 } = require("../controllers/taskController");
 const { verifyToken } = require("../middleware/auth");
 
@@ -13,5 +14,6 @@ router
   .route("/:id")
   .put(verifyToken, updateTask)
   .delete(verifyToken, deleteTask);
+router.route("/:id/set-completed").put(verifyToken, status);
 
 module.exports = router;

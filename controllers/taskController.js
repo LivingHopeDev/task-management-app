@@ -110,9 +110,41 @@ const deleteTask = async (req, res) => {
   }
 };
 
+const status = async (req, res) => {
+  const taskId = req.params.id;
+
+  try {
+    if (isNaN(taskId)) {
+      return res.status(400).json({ message: `Invalid task ID: ${taskId}` });
+    }
+    const [userTask] = await db.query("SELECT * FROM task WHERE id = ?", [
+      taskId,
+    ]);
+    if (userTask.length === 0) {
+      return res.status(404).json({ message: `Task not found` });
+    }
+
+    const newCompletedStatus = !userTask[0].completed;
+
+    await db.query("UPDATE task SET completed = ? WHERE id = ?", [
+      newCompletedStatus,
+      taskId,
+    ]);
+
+    if (newCompletedStatus) {
+      res.status(200).json({ message: "Task completed" });
+    } else {
+      res.status(200).json({ message: "Task not completed" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 module.exports = {
   createTask,
   getUserTask,
   updateTask,
   deleteTask,
+  status,
 };
