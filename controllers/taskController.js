@@ -67,7 +67,7 @@ const updateTask = async (req, res) => {
     if (result[0].affectedRows === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Task not found or unauthorized" });
+        .json({ success: false, message: "Unauthorized to access this task" });
     }
 
     return res.status(200).json({ success: true, message: "Task updated" });
