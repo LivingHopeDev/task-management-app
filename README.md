@@ -4,7 +4,7 @@ This API is a simple and user-friendly application programming interface designe
 
 The API functionalities includes:
 
-1. Display tasks - Stored tasks in the memory can be accessed. An endpoint that shows all the tasks which will include the title,description,dueDate,status and id.
+1. Display tasks - Stored tasks in the database can be accessed. An endpoint that shows all the tasks which will include the title,description,dueDate,status and id.
 2. Delete task.
 3. Add task.
 4. Update task.
@@ -33,8 +33,47 @@ To install all dependencies, run `npm install`
 
 ### Configuration
 
+Create a `.env` file in the project's root directory and define the following environment variables
+
 ```
-PORT=5000
+HOST = your_host_name
+PASSWORD = your_database_password
+USER = your_database_user
+DATABASE = your_database_name
+PORT = 5000
+JWT_SECRET = your_jwt_secret
+```
+
+Replace the above with with your actual database connection credentials.
+
+### Limitation
+
+`The script for creating the database and the tables automatically hasn't been implemented because i couldn't get the mysql client on the CMD to run it as at the point of writing this readme file`.
+To use this API, you can use the following commands to generate the tables
+
+To create the user table
+
+```
+CREATE TABLE user (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+```
+
+To create the task table
+
+```
+CREATE TABLE task (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  dueDate DATE,
+  completed BOOLEAN DEFAULT false,
+  user_id INT,
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
 ```
 
 To run the application, run any of the commands
@@ -55,7 +94,7 @@ To test for the endpoints, the developer should have installed Postman or thunde
 #### POST
 
 This endpoint registers a new user. It returns a success message.
-sample: `localhost:5000/api/register`
+sample: `localhost:5000/api/user/register`
 
 - body (JSON)
 
@@ -78,7 +117,7 @@ sample: `localhost:5000/api/register`
 #### POST
 
 This endpoint logs in a user. It returns the users details when the login is successful.
-sample: `localhost:5000/api/login`
+sample: `localhost:5000/api/user/login`
 
 - body (JSON)
 
@@ -158,7 +197,7 @@ sample: `localhost:5000/api/task/1`
 }
 ```
 
-If the user try to update a task not created by him:
+If the user try to update a task not created by him/her:
 
 ```
 { "success": false,
@@ -196,7 +235,3 @@ sample: `localhost:5000/api/task/1/set-completed`
 - 404: Not found
 - 500: Internal server error
 - 200: ok
-
-### Limitation
-
-` The script for creating the database and the tables automatically hasn't been implemented because i couldn't get the mysql client on the CMD to run it as at the point of writing this readme file`.
